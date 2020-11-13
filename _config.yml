@@ -7,7 +7,7 @@ locale: en_US
 description: script your own Earth
 logo: site-logo.png
 search: true
-url: https://karttur.github.io/basin_delineate_docs
+url: https://karttur.github.io/basin_extract_docs
 #commonurl is the link to common resources for all my sites
 commonurl: https://karttur.github.io/common
 
