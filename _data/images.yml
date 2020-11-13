@@ -1,0 +1,190 @@
+ts-mdsl-rntwi_RNTWI_id_2001-2016_AS:
+    file: ts-mdsl-rntwi_RNTWI_id_2001-2016_AS.jpg
+    author: Thomas Gumbricht
+    caption: Theil-Sen estimated median change in rain normalised soil moisture 2001-2016, Indonesia
+    credit: null
+    source: null
+
+GRASS7_1stStartup_welcome01:
+  file: GRASS7_1stStartup_welcome01.png
+  source: GRASS7_1stStartup_welcome01.png
+  author: Thomas Gumbricht
+  caption: GRASS7 initial startup page
+  credit: null
+  source: null
+
+GRASS7_1stStartup_database:
+  file: GRASS7_1stStartup_database.png
+  source: GRASS7_1stStartup_database.png
+  author: Thomas Gumbricht
+  caption: Define new GRASS Location
+  credit: null
+  source: null
+
+GRASS7_1stStartup_create-location:
+  file: GRASS7_1stStartup_create-location.png
+  source: GRASS7_1stStartup_create-location.png
+  author: Thomas Gumbricht
+  caption: Define new GRASS Location
+  credit: null
+  source: null
+
+GRASS7_1stStartup_define-location:
+  file: GRASS7_1stStartup_define-location.png
+  source: GRASS7_1stStartup_define-location.png
+  author: Thomas Gumbricht
+  caption: Define new GRASS Location
+  credit: null
+  source: null
+
+GRASS7_1stStartup_import-data:
+  file: GRASS7_1stStartup_import-data.png
+  source: GRASS7_1stStartup_import-data.png
+  author: Thomas Gumbricht
+  caption: Import data used for defining projection and region
+  credit: null
+  source: null
+
+GRASS7_1stStartup_import-success:
+  file: GRASS7_1stStartup_import-success.png
+  source: GRASS7_1stStartup_import-success.png
+  author: Thomas Gumbricht
+  caption: Import data used for defining projection and region
+  credit: null
+  source: null
+
+GRASS7_empty-GUI:
+  file: GRASS7_empty-GUI.png
+  source: GRASS7_empty-GUI.png
+  author: Thomas Gumbricht
+  caption: GRASS 7 Graphical User Interface (GUI)
+  credit: null
+  source: null
+
+GRASS7_map-display-amazonia-DEM:
+  file: GRASS7_map-display-amazonia-DEM.png
+  source: GRASS7_map-display-amazonia-DEM.png
+  author: Thomas Gumbricht
+  caption: GRASS 7 Map Display
+  credit: null
+  source: null
+
+GRASS7_empty-terminal:
+  file: GRASS7_empty-terminal.png
+  source: GRASS7_empty-terminal.png
+  author: Thomas Gumbricht
+  caption: GRASS 7 terminal commandline
+  credit: null
+  source: null
+
+GRASS7_Amazonia-Startup_welcome01:
+  file: GRASS7_Amazonia-Startup_welcome01.png
+  source: GRASS7_Amazonia-Startup_welcome01.png
+  author: Thomas Gumbricht
+  caption: GRASS7 startup page with existing location
+  credit: null
+  source: null
+
+GRASS7_Amazonia-drainage:
+  file: GRASS7_Amazonia-drainage.png
+  source: GRASS7_Amazonia-drainage.png
+  author: Thomas Gumbricht
+  caption: GRASS7 accumualtion layer from r.mapcalc over Amazonia
+  credit: null
+  source: null
+
+GRASS7_Amazonia-drainage-SFD:
+  file: GRASS7_Amazonia-drainage-SFD.png
+  source: GRASS7_Amazonia-drainage-SFD.png
+  author: Thomas Gumbricht
+  caption: Upstream area and identified candidate basin outlets using Single Flow Direction (SFD). The large river channel is the Amazon River.
+  credit: null
+  source: null
+
+GRASS7_Amazonia-drainage-MFD:
+  file: GRASS7_Amazonia-drainage-MFD.png
+  source: GRASS7_Amazonia-drainage-MFD.png
+  author: Thomas Gumbricht
+  caption: Upstream area and identified candidate basin outlets using Multi Flow Direction (MFD). The large river channel is the Amazon River.
+  credit: null
+  source: null
+
+GRASS7_Amazon-River-drainage-SFD-MFD:
+  file: GRASS7_Amazon-River-drainage-SFD-MFD.png
+  source: GRASS7_Amazon-River-drainage-SFD-MFD.png
+  author: Thomas Gumbricht
+  caption: Upstream area and identified candidate basin outlets comparing Single and Multi Flow Direction (SFD/MFD). The large river channel is the Amazon River.
+  credit: null
+  source: null
+
+upstream_SFD_amazon:
+  file: amazon_upstream_SFD.png
+  source: amazon_upstream_SFD.png
+  author: Thomas Gumbricht
+  caption: Upstream area calcualted using Single Flow Direction (SFD). The map region is the mouth of the Amazon River.
+  credit: null
+  source: null
+
+upstream_MFD_amazon:
+  file: amazon_upstream_MFD.png
+  source: amazon_upstream_MFD.png
+  author: Thomas Gumbricht
+  caption: Upstream area calcualted using Multiple Flow Directions (MFD) with default convergence (5). The map region is the mouth of the Amazon River.
+  credit: null
+  source: null
+
+upstream_MFD01_amazon:
+  file: amazon_upstream_MFD01.png
+  source: amazon_upstream_MFD01.png
+  author: Thomas Gumbricht
+  caption: Upstream area calcualted using Multiple Flow Directions (MFD) with convergence = 1. The map region is the mouth of the Amazon River.
+  credit: null
+  source: null
+
+upstream_MFD01ab_amazon:
+  file: amazon_upstream_MFD01ab.png
+  source: amazon_upstream_MFD01ab.png
+  author: Thomas Gumbricht
+  caption: Upstream area calcualted using Multiple Flow Directions (MFD) with convergence = 1 and -b (beautify flat area). The map region is the mouth of the Amazon River.
+  credit: null
+  source: null
+
+eclipse_ide_launcher:
+  file: eclipse_ide_launcher.png
+  source: eclipse_ide_launcher.png
+  author: Thomas Gumbricht
+  caption: Eclipse select a new directory as workspace.
+  credit: null
+  source: null
+
+eclipse_welcome_page:
+  file: eclipse_welcome_page.png
+  source: eclipse_welcome_page.png
+  author: Thomas Gumbricht
+  caption: Eclipse welcome page, just click the Workbench in the upper right corner.
+  credit: null
+  source: null
+
+eclipse_menu_open-other-perspective:
+  file: eclipse_menu_open-other-perspective.png
+  source: eclipse_menu_open-other-perspective.png
+  author: Thomas Gumbricht
+  caption: Eclipse menu route for opening a new perspective.
+  credit: null
+  source: null
+
+eclipse_window_select_perspective:
+  file: eclipse_window_select_perspective.png
+  source: eclipse_window_select_perspective.png
+  author: Thomas Gumbricht
+  caption: Eclipse pop up widnow for selecting perspective.
+  credit: null
+  source: null
+
+eclipse_select_interpreter_ortho-py38:
+    file: eclipse_select_interpreter_ortho-py38.png
+    source: eclipse_select_interpreter_ortho-py38.png
+    author: Thomas Gumbricht
+    caption: Eclipse window for selecting interpreter.
+    credit: null
+    source: null

@@ -1,0 +1,31 @@
+---
+layout: page
+title: River basin delineation
+excerpt: "River basin delineation from DEM with GRASS, GDAL QGIS and python scripting"
+image: rainfall-delta_3B43_trmm_2001-2016_mk-z-ts-model
+search_omit: true
+---
+
+<h1>Introduction</h1>
+
+Water flow and river basins have a momentous influence on both natural landscapes and processes as well as on human societies. To understand water flow through and out of the landscape, correctly delineate the boundaries between different basins is essential.
+
+<h1>River basin delineation</h1>
+
+This blog is on how to delineate river basins from Digital Elevation Models (DEM) using a combination of different applications. The core tools used are GRASS GIS and Python scripting bundled to GDAL. QGIS is used for visualisation and inspection.
+
+If you want to follow this tutorial series in all its details, you first need to make som installations and setup. 
+
+<h1>Installations and setup<h1>
+<ul class="post-list">
+{% for post in site.categories.basin_delineate_setup reversed %}
+  <li><article><a href="{{ site.url }}{{ post.url }}">{{ post.title }} <span class="entry-date"><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%B %d, %Y" }}</time></span>{% if post.excerpt %} <span class="excerpt">{{ post.excerpt | remove: '\[ ... \]' | remove: '\( ... \)' | markdownify | strip_html | strip_newlines | escape_once }}</span>{% endif %}</a></article></li>
+{% endfor %}
+</ul>
+
+<h1>River basin delineation<h1>
+<ul class="post-list">
+{% for post in site.categories.basindelineate reversed %}
+  <li><article><a href="{{ site.url }}{{ post.url }}">{{ post.title }} <span class="entry-date"><time datetime="{{ post.date | date_to_xmlschema }}">{{ post.date | date: "%B %d, %Y" }}</time></span>{% if post.excerpt %} <span class="excerpt">{{ post.excerpt | remove: '\[ ... \]' | remove: '\( ... \)' | markdownify | strip_html | strip_newlines | escape_once }}</span>{% endif %}</a></article></li>
+{% endfor %}
+</ul>
