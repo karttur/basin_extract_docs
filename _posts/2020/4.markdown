@@ -43,7 +43,13 @@ The GRASS raster command [r.watershed](https://grass.osgeo.org/grass78/manuals/r
 
 To apply an SFD flow routing, set the flag _-s_. In the example below I have set both the _-a_ and _-s_ flags, and I have requested the production of layers for _accumulation_ and _drainage_. I have set the cutoff threshold at 2000 cells:
 
+With the original DEM (in the mapset PERMANENT):
+
 <span class='terminal'>> r.watershed -as elevation=DEM@PERMANENT accumulation=SFD_upstream drainage=SFD_drainage threshold=2000 --overwrite</span>
+
+With a patched up DEM from [part 1](../basin_delineate_01):
+
+<span class='terminal'>> r.watershed -as elevation=hydroptfill_DEM accumulation=SFD_upstream drainage=SFD_drainage threshold=2000 --overwrite</span>
 
 It takes a rather long time to run an [r.watershed](https://grass.osgeo.org/grass78/manuals/r.watershed.html) analysis. GRASS thus offers a faster alternative, [r.terraflow](https://grass.osgeo.org/grass78/manuals/r.terraflow.html) for massive grids. [r.terraflow](https://grass.osgeo.org/grass78/manuals/r.terraflow.html), however, produces less accurate results and I strongly recommend against using it.
 
@@ -51,7 +57,13 @@ It takes a rather long time to run an [r.watershed](https://grass.osgeo.org/gras
 
 Omitting the _-s_ flag causes [r.watershed](https://grass.osgeo.org/grass78/manuals/r.watershed.html) to run in default mode, applying an MFD flow routing.
 
+With the original DEM (in the mapset PERMANENT):
+
 <span class='terminal'>> r.watershed -a elevation=DEM@PERMANENT accumulation=MFD_upstream drainage=MFD_drainage threshold=2000 --overwrite</span>
+
+With a patched up DEM from [part 1](../basin_delineate_01):
+
+<span class='terminal'>> r.watershed -a elevation=hydroptfill_DEM accumulation=MFD_upstream drainage=MFD_drainage threshold=2000 --overwrite</span>
 
 ##### MFD alternative parameterizations
 
@@ -95,7 +107,7 @@ Start by creating the target directory:
 
 The combined commands for exporting a nicely symbolised SFD accumulation layer:
 
-<span class='terminal'>> r.mapcalc "SFD_ln_upstream = 10*log(SFD_upstream)" --overwrite</span>
+<span class='terminal'>> r.mapcalc \"SFD_ln_upstream = 10*log(SFD_upstream)\" --overwrite</span>
 
 <span class='terminal'>> r.colors map=SFD_ln_upstream color=ryb</span>
 
@@ -105,7 +117,7 @@ The combined commands for exporting a nicely symbolised SFD accumulation layer:
 
 The combined commands for exporting a nicely symbolised MFD accumulation layer:
 
-<span class='terminal'>> r.mapcalc "MFD_ln_upstream = 10*log(MFD_upstream)" --overwrite</span>
+<span class='terminal'>> r.mapcalc \"MFD_ln_upstream = 10*log(MFD_upstream)\" --overwrite</span>
 
 <span class='terminal'>> r.colors map=MFD_ln_upstream color=ryb</span>
 
@@ -115,7 +127,13 @@ The combined commands for exporting a nicely symbolised MFD accumulation layer:
 
 Use [r.mapcalc](https://grass.osgeo.org/grass78/manuals/r.mapcalc.html) to create a layer where the terminal water body, into which the basins you want to delineate, drain. This is equal to setting all land areas (cells in your DEM layer with valid data) to NULL, and your terminal water body (e.g. the areas assigned with NULL in the DEM) to a value of 1.
 
-<span class='terminal'>> r.mapcalc "drain_terminal = if(isnull('DEM@PERMANENT'), 1, null())"</span>
+With the original DEM (in the mapset PERMANENT):
+
+<span class='terminal'>> r.mapcalc \"drain_terminal = if(isnull('DEM@PERMANENT'), 1, null())\"</span>
+
+With a patched up DEM from [part 1](../basin_delineate_01):
+
+<span class='terminal'>> r.mapcalc \"drain_terminal = if(isnull('hydroptfill_DEM'), 1, null())\"</span>
 
 #### Get shoreline
 
@@ -127,9 +145,9 @@ With the terminal water body identified, the shoreline with all the basin outlet
 
 With both the shoreline and the flow accumulation identified on a per pixel level, you can once again apply [r.mapcalc](https://grass.osgeo.org/grass78/manuals/r.mapcalc.html), but this time to mask out the layer with the accumulated upstream area to only include the shoreline (i.e. the potential basin outlets).
 
-<span class='terminal'>> r.mapcalc "shoreline_SFD_flowacc = if((shoreline > 1), SFD_upstream, null())"</span>
+<span class='terminal'>> r.mapcalc \"shoreline_SFD_flowacc = if((shoreline > 1), SFD_upstream, null())\"</span>
 
-<span class='terminal'>> r.mapcalc "shoreline_MFD_flowacc = if((shoreline > 1), MFD_upstream, null())"</span>
+<span class='terminal'>> r.mapcalc \"shoreline_MFD_flowacc = if((shoreline > 1), MFD_upstream, null())\"</span>
 
 #### Threshold minimum drainage area
 
@@ -152,8 +170,8 @@ As the map has a spatial resolution of 231.6 m, 2000 cells equals approximately 
 
 Distilling the candidate basin outlets to a final set is rather complex - in essence the remaining of parts 2, and parts 3 and 4 are required to get there. To capture all outlets of all basins, the MFD and SFD results need to be joined. Easiest done using [r.mapcalc](https://grass.osgeo.org/grass78/manuals/r.mapcalc.htm). Alternatively you can patch the vectorised outlets (shown further down) using [v.patch](https://grass.osgeo.org/grass78/manuals/v.patch.htm).
 
-<span class='terminal'>> r.mapcalc "shoreline_flowacc = if ((shoreline_SFD_flowacc > shoreline_MFD_flowacc), shoreline_SFD_flowacc, shoreline_MFD_flowacc)" --overwrite</span>
-FITTA
+<span class='terminal'>> r.mapcalc \"shoreline_flowacc = if ((shoreline_SFD_flowacc > shoreline_MFD_flowacc), shoreline_SFD_flowacc, shoreline_MFD_flowacc)\" --overwrite</span>
+
 <span class='terminal'>> r.reclass input=shoreline_flowacc output=basin_outlets rules='/Volumes/GRASS2020/GRASSsupport/reclass/reclass_flow_acc_2000.txt' --overwrite</span>
 
 #### Vectorize basin outlet candidates
@@ -205,9 +223,15 @@ If you use the entire DEM for the cost grow analaysis, the result will connect a
 
 To speed up the processing, you can [r.mapcalc](https://grass.osgeo.org/grass78/manuals/r.mapcalc.html) the input DEM to only include lower elevations and set higher elevations to NULL. To avoid problems with negative DEM values you can also set these to 0.
 
-<span class='terminal'>> r.mapcalc "lowlevel_DEM = if((DEM@PERMANENT <= 0), 0, null())"</span>
+With the original DEM (in the mapset PERMANENT):
 
-If you want to expand the connectivity you can set the "0" of _lowlevel_DEM_ to include also positive elevation (e.g. <span class='terminal'>> r.mapcalc "lowlevel_DEM = if((DEM@PERMANENT <= 2), 0, null())"</span>).
+<span class='terminal'>> r.mapcalc \"lowlevel_DEM = if((DEM@PERMANENT <= 0), 0, null())\"</span>
+
+With a patched up DEM from [part 1](../basin_delineate_01):
+
+<span class='terminal'>> r.mapcalc \"lowlevel_DEM = if((hydroptfill_DEM <= 0), 0, null())\"</span>
+
+If you want to expand the connectivity you can set the "0" of _lowlevel_DEM_ to include also positive elevation (e.g. <span class='terminal'>> r.mapcalc \"lowlevel_DEM = if((DEM@PERMANENT <= 2), 0, null())\"</span>).
 
 Then run [r.cost](https://grass.osgeo.org/grass78/manuals/r.cost.html) on the more limited DEM. The _-n_ flag retains the null values in the output layer.
 
@@ -223,7 +247,13 @@ To cluster the cells constituting basin mouths use the GRASS command [r.clump](h
 
 To calculate cost growth for only the shoreline, apply [r.mapcalc](https://grass.osgeo.org/grass78/manuals/r.mapcalc.html) to extract the DEM only for the shoreline.
 
+With the original DEM (in the mapset PERMANENT):
+
 <span class='terminal'>> r.mapcalc "shoreline_DEM = if((shoreline > 1 && DEM@PERMANENT <= 0), 0, null())" --overwrite</span>
+
+With a patched up DEM from [part 1](../basin_delineate_01):
+
+<span class='terminal'>> r.mapcalc \"shoreline_DEM = if((shoreline > 1 && hydroptfill_DEM <= 0), 0, null())\" --overwrite</span>
 
 Then repeat the processing steps for identifying the basin mouths, but for the beachfront mouths.
 
@@ -271,6 +301,8 @@ To transfer the cell data underlying each point to the vector attribute table, u
 
 <span class='terminal'>> v.what.rast map=basin_mouth_outlet_pt raster=DEM@PERMANENT column=elevation</span>
 
+<span class='terminal'>> v.what.rast map=basin_mouth_outlet_pt raster=hydroptfill_DEM column=elevation</span>
+
 <span class='terminal'>> v.what.rast map=basin_mouth_outlet_pt raster=shoreline_outlet_clumps column=mouth_id</span>
 
 <span class='terminal'>> v.what.rast map=basin_mouth_outlet_pt raster=lowlevel_outlet_clumps column=basin_id</span>
@@ -279,6 +311,10 @@ To transfer the cell data underlying each point to the vector attribute table, u
 
 <span class='terminal'>> v.what.rast map=basin_SFD_outlet_pt raster=DEM@PERMANENT column=elevation</span>
 
+or
+
+<span class='terminal'>> v.what.rast map=basin_SFD_outlet_pt raster=hydroptfill_DEM column=elevation</span>
+
 <span class='terminal'>> v.what.rast map=basin_SFD_outlet_pt raster=shoreline_outlet_clumps column=mouth_id</span>
 
 <span class='terminal'>> v.what.rast map=basin_SFD_outlet_pt raster=lowlevel_outlet_clumps column=basin_id</span>
@@ -286,6 +322,10 @@ To transfer the cell data underlying each point to the vector attribute table, u
 <span class='terminal'>> v.what.rast map=basin_MFD_outlet_pt raster=MFD_upstream column=upstream</span>
 
 <span class='terminal'>> v.what.rast map=basin_MFD_outlet_pt raster=DEM@PERMANENT column=elevation</span>
+
+or
+
+<span class='terminal'>> v.what.rast map=basin_MFD_outlet_pt raster=hydroptfill_DEM column=elevation</span>
 
 <span class='terminal'>> v.what.rast map=basin_MFD_outlet_pt raster=shoreline_outlet_clumps column=mouth_id</span>
 
@@ -325,7 +365,7 @@ Apply an [r.buffer]() analysis the width of 1 diagonal cell (330 m as caclualted
 
 Overlay the buffer with the map of the terminal drainage, and only retain the buffer cells that fall in the terminal drainage (i.e. on the seaside of the shoreline):
 
-<span class='terminal'>> r.mapcalc "shorewall = if((drain_terminal == 1 && mouth_buffer > 1), 1, null())" --overwrite</span>
+<span class='terminal'>> r.mapcalc \"shorewall = if((drain_terminal == 1 && mouth_buffer > 1), 1, null())\" --overwrite</span>
 
 Convert the shoreline to vectors - this is the data source you need for the Python processing in the [next part](../basin-delineate-03).
 
@@ -352,7 +392,11 @@ The complete GRASS processing chain in this post (after importing the DEM and cr
 
 r.watershed -as elevation=DEM@PERMANENT accumulation=SFD_upstream drainage=SFD_drainage threshold=2000 --overwrite
 
+# r.watershed -as elevation=hydroptfill_DEM accumulation=SFD_upstream drainage=SFD_drainage threshold=2000 --overwrite
+
 r.watershed -a elevation=DEM@PERMANENT accumulation=MFD_upstream drainage=MFD_drainage threshold=2000 --overwrite
+
+#r.watershed -a elevation=hydroptfill_DEM accumulation=MFD_upstream drainage=MFD_drainage threshold=2000 --overwrite
 
 # Export upstream layers
 
@@ -373,6 +417,8 @@ r.out.gdal -f input=MFD_ln_upstream format=GTiff type=Byte output=/Volumes/GRASS
 # Identify terminal water body
 
 r.mapcalc "drain_terminal = if(isnull('DEM@PERMANENT'), 1, null())"
+
+#r.mapcalc "drain_terminal = if(isnull('hydroptfill_DEM'), 1, null())"
 
 # Get shoreline
 
@@ -414,6 +460,8 @@ r.to.vect input=basin_MFD_outlets output=basin_MFD_outlet_pt type=point --overwr
 
 r.mapcalc "lowlevel_DEM = if((DEM@PERMANENT <= 0), 0, null())"
 
+#r.mapcalc "lowlevel_DEM = if((hydroptfill_DEM <= 0), 0, null())"
+
 r.cost -n input=lowlevel_DEM output=lowlevel_outlet_costgrow start_points=basin_outlet_pt max_cost=0 --overwrite
 
 r.clump -d input=lowlevel_outlet_costgrow  output=lowlevel_outlet_clumps --overwrite
@@ -423,6 +471,8 @@ r.out.gdal -f input=lowlevel_outlet_clumps format=GTiff output=/Volumes/GRASS202
 # Identify beachfront river mouths
 
 r.mapcalc "shoreline_DEM = if((shoreline > 1 && DEM@PERMANENT <= 0), 0, null())" --overwrite
+
+#r.mapcalc "shoreline_DEM = if((shoreline > 1 && hydroptfill_DEM <= 0), 0, null())" --overwrite
 
 r.cost -n input=shoreline_DEM output=shoreline_outlet_costgrow start_points=basin_outlet_pt max_cost=0 --overwrite
 
@@ -458,6 +508,8 @@ v.what.rast map=basin_mouth_outlet_pt raster=SFD_upstream column=upstream
 
 v.what.rast map=basin_mouth_outlet_pt raster=DEM@PERMANENT column=elevation
 
+#v.what.rast map=basin_mouth_outlet_pt raster=hydroptfill_DEM column=elevation
+
 v.what.rast map=basin_mouth_outlet_pt raster=shoreline_outlet_clumps column=mouth_id
 
 v.what.rast map=basin_mouth_outlet_pt raster=lowlevel_outlet_clumps column=basin_id
@@ -466,6 +518,8 @@ v.what.rast map=basin_SFD_outlet_pt raster=SFD_upstream column=upstream
 
 v.what.rast map=basin_SFD_outlet_pt raster=DEM@PERMANENT column=elevation
 
+#v.what.rast map=basin_SFD_outlet_pt raster=hydroptfill_DEM column=elevation
+
 v.what.rast map=basin_SFD_outlet_pt raster=shoreline_outlet_clumps column=mouth_id
 
 v.what.rast map=basin_SFD_outlet_pt raster=lowlevel_outlet_clumps column=basin_id
@@ -473,6 +527,8 @@ v.what.rast map=basin_SFD_outlet_pt raster=lowlevel_outlet_clumps column=basin_i
 v.what.rast map=basin_MFD_outlet_pt raster=MFD_upstream column=upstream
 
 v.what.rast map=basin_MFD_outlet_pt raster=DEM@PERMANENT column=elevation
+
+#v.what.rast map=basin_MFD_outlet_pt raster=hydroptfill_DEM column=elevation
 
 v.what.rast map=basin_MFD_outlet_pt raster=shoreline_outlet_clumps column=mouth_id
 
@@ -524,7 +580,7 @@ r.out.gdal -f format=GTiff type=Byte input=shorewall output=/Volumes/GRASS2020/G
 
 # Fill up the original DEM with the holes created from the difference between thickwall and shorewall
 
-r.mapcalc "fillholeDEM = if ((thickwall==1 && isnull(mouthwall)),1, null() ) " --overwrite
+r.mapcalc "fillholeDEM = if ((thickwall==1 && isnull(shorehwall)),1, null() ) " --overwrite
 
 r.out.gdal format=GTiff type=Byte input=fillholeDEM output=/Volumes/GRASS2020/GRASSproject/SRTM/region/basin/amazonia/0/fillholeDEM_amazonia_0_cgiar-250.tif --overwrite
 

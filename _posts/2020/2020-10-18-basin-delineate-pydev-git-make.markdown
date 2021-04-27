@@ -33,7 +33,7 @@ You need to have a [GitHub](https://github.com) account and you must have [Insta
 This post outlines how to create a [GitHub](https://github.com) repo with a default _main_ branch and a _dev_(elopment) branch using [git command line tool](https://karttur.github.io/git-vcs/git/git-commandline-install/). You have to register a free account with [GitHub](https://github.com) and then [create a repository](https://karttur.github.io/git-vcs/git/git-github/). The name of the repo with the _basin_extract_ code is called _basin_extract_. For a more detailed instruction on creating a new repo, see the post [Remote repositories with GitHub](https://karttur.github.io/git-vcs/git/git-github/).
 
 ![github-settings-menu-SSH-keys](../../images/github-code-alts.png){: .pull-right}
-When the new repo is created, click on the green button <span class='button'>Code</span>. There are (in November 2020) 4 alternatives for cloning, plus the additinal options [Open with GitHub Desktop] and [Download ZIP]. Copy the text for the clone alternative [SSH], as shown in the figure to the right.
+When the new repo is created, click on the green button <span class='button'>Code</span>. There are (in November 2020) 4 alternatives for cloning, plus the additional options [Open with GitHub Desktop] and [Download ZIP]. Copy the text for the clone alternative [SSH], as shown in the figure to the right.
 
 ## Clone to local repo
 
@@ -161,7 +161,7 @@ Stage and commit the complete project in your local clone of the repo _basin_ext
 <span class='terminal'>git add .<br>
 git commit \-m \'initial commit of PyDev project\'</span>
 
-The check the status of your repo:
+Then check the status of your repo:
 
 <span class='terminal'>$ git status</span>
 

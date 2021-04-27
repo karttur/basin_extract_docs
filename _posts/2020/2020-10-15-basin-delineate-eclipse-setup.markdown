@@ -21,7 +21,7 @@ fig5: eclipse_select_interpreter_ortho-py38
 
 ## Introduction
 
-_basin_extract_ is a Python package that belongs to the semi automated system for delineating river basins created by Thomas Gumbricht. This post is a manual on how to setup a Python environment for the _basin_extract_ package in the <span class='app'>Eclipse</span> Integrated Development Environment (IDE).
+_basin_extract_ is a Python package that belongs to the semi automated system for delineating river basins created by Thomas Gumbricht. This post is a manual on how to setup a Python environment for the _basin_extract_ package in the <span class='app'>Eclipse</span> Integrated Development Environment (IDE). The manual focuses on MacOS, if want to us Linux, the installation of <span class='app'>Eclipse</span> is covered in the post [SPIDE for Ubuntu 20](https://karttur.github.io/setup-ide/blog/ubuntu20-setup-spide/).
 
 ### Prerequisites
 
@@ -32,11 +32,11 @@ You must have installed [Anaconda](https://karttur.github.io/setup-ide/setup-ide
 The _basin_extract_ package requires the standard (default) Python packages that come with Eclipse, plus some additional packages:
 
 - numpy
-- pandas
+- GDAL
 - shapely
 - scipy
 
-Trying to setup a working Python environment for _basin_extract_ in October 2020 I found that the listed packages are incompatible in Python 3.8s. The virtual environment herein is thus setup using the older Python 3.6 interpreter.
+Trying to setup a working Python environment for _basin_extract_ in October 2020 I found that the listed packages are incompatible in Python 3.8. The virtual environment herein is thus setup using the older Python 3.6 interpreter.
 
 The basics of [Conda virtual environments](https://karttur.github.io/setup-ide/setup-ide/conda-environ/) is covered in another post. More extensive information is available on the [official conda document site](https://docs.conda.io/projects/conda/en/latest/user-guide/tasks/manage-environments.html). Here I will only step over the barebones of setting up a virtual environment for Ortho.
 
@@ -52,7 +52,14 @@ Before setting up the virtual environment, update Conda and Anaconda at the term
 
 <span class='terminal'>(base) ...$ conda update anaconda</span>
 
-#### Create a Python 3.6 virtual environment
+
+#### Create a Python 3.6 virtual environment through yaml
+
+YAML (a recursive acronym for "YAML Ain't Markup Language") is usually a kind of configuration file. <span class='terminalapp'>conda</span> virtual environments can be created (or _activated_) using a yaml file that defines all the packages to install. The YAML file for the _basin_delineate_ package is available in the [GitHub]() repo under [docs]() as [basin_extract_py36.yml](). You can download the YAML file and then edit the last line that defines the location of your conda virtual environments. Put the YNAL file in your home diretory and open a <span class='app'>Terminal</span> also pointing to your home directory and activate a new environment with the command:
+
+<span class='terminal'>$ conda activate -f basin_extract_py36.yml</span>
+
+#### Create a Python 3.6 virtual environment from scratch
 
 The basic command for creating a virtual Python environment with a pre-defined version of Python is (do not run it yet, read a bit further first):
 
@@ -60,7 +67,7 @@ The basic command for creating a virtual Python environment with a pre-defined v
 
 If your Conda environment is defined to include a set of additional packages (if you have no idea about what I am writing, never mind and just continue), then these will be installed in your virtual environment on top of the default Python installation. To avoid that instead type:
 
-<span class='terminal'>(base) ...$ conda create --no-default-packages -n basin_extract_py36 python=3.6</span>
+<span class='terminal'>(base) ...$ conda create \-\-no-default-packages -n basin_extract_py36 python=3.6</span>
 
 This will install a barebone Python 3.6 virtual environment even if you have defined additional packages to be installed by default. Now you can go ahead and create the barebone virtual environment with one of the command above.
 
@@ -94,7 +101,7 @@ Setting up a virtual environment with all the packages listed has the advantage 
 
 And then extend the Conda _create_ command with a list of all the packages to install:
 
-<span class='terminal'>(base) ...$ conda create --no-default-packages -n basin_extract_py36 python=3.6 numpy scipy gdal shapely</span>
+<span class='terminal'>(base) ...$ conda create \-\-no-default-packages -n basin_extract_py36 python=3.6 numpy scipy gdal shapely</span>
 
 ### Set your virtual environment as your Python interpreter in Eclipse
 

@@ -27,17 +27,19 @@ figure8: GRASS7_empty-terminal
 <script src="https://karttur.github.io/common/assets/js/karttur/togglediv.js"></script>
 # Introduction
 
-This post covers how to start GRASS 7 for the first time. Including defining a GRASS database and a location with a projection. The manual is for GRASS 7 on Mac OSX and is part of a series on how to delineate river basins using GRASS GIS and other tools.
+This post covers how to start GRASS 7 for the first time. Including defining a GRASS database and a location with a projection. The manual is for GRASS 7 on Mac OSX and is part of a series on how to [delineate river basins](../../) using GRASS GIS and other tools.
 
 The manual only covers the command line GRASS tools for processing. But all the processing can also be done using the GRASS Graphical User Interface (GUI).
 
 ## Prerequisites
 
-You must have GRASS 7 installed as described in the post on [Install GDAL, QGIS and GRASS](https://karttur.github.io/setup-ide/setup-ide/install-gis/#grass). You also need a projected raster file (e.g. a GeoTIFF) for defining both the projection and the location.
+You must have GRASS 7 installed as described in the post on [Install GDAL, QGIS and GRASS](https://karttur.github.io/setup-ide/setup-ide/install-gis/#grass) (MacOS) or [SPIDE for Ubuntu 20](https://karttur.github.io/setup-ide/blog/ubuntu20-setup-spide/) (Linux).
+
+ You also need a projected raster file (e.g. a GeoTIFF) for defining both the projection and the location.
 
 ## Start GRASS
 
-Before you actually start GRASS, you need to start up a <span class='app'>Terminal</span> session. Otherwise GRASS might not start properly. Once you have the <span class='app'>Terminal</span> up and running locate your installation of GRASS7 and start it. Alternatively you can also start GRASS7 directly from the command line, just type in the full path to the <span class='file'>grass.sh</span> executable script:
+Before you actually start GRASS, you need to start up a <span class='app'>Terminal</span> session. Otherwise GRASS might not start properly. Once you have the <span class='app'>Terminal</span> up and running, locate your installation of GRASS7 and start it. Alternatively you can also start GRASS7 directly from the command line, just type in the full path to the <span class='file'>grass.sh</span> executable script (MacOS):
 
 <span class='terminal'>/Applications/GRASS-7.X.X.app/Contents/MacOS/Grass.sh
 </span>
@@ -49,7 +51,7 @@ The startup might take a while, and GRASS should then show the window _GRASS GIS
 <figcaption> {{ site.data.images[page.figure1].caption }} </figcaption>
 </figure>
 
-If the location you want to work with is already defined in your GRASS database, it is listed as a GRASS location (the location Amazonia in the example below). You can then just skip to the last section in this post _Create a new mapset_.
+If the location you want to work with is already defined in your GRASS database, it is listed as a GRASS location (the location _Amazonia_ in the example below). You can then just skip to the last section in this post _Create a new mapset_.
 
 <figure>
 <img src="{{ site.commonurl }}/images/{{ site.data.images[page.figure1b].file }}">

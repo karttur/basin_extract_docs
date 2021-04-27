@@ -10,7 +10,7 @@ tags:
   - delineation
   - hydrology
 image: avg-trmm-3b43v7-precip_3B43_trmm_2001-2016_A
-modified: '2020-10-28 T06:17:25.000Z'
+date: '2020-10-28 T06:17:25.000Z'
 modified: '2020-10-28 T06:17:25.000Z'
 comments: true
 share: true
@@ -23,7 +23,7 @@ figure6: GRASS7_Amazon-River-drainage-SFD-MFD
 
 # Introduction
 
-In this part (4) of the of the Basin delineation tutorial series you will run a GRASS command line script generated in [part 3](../basin-delineate-03). The script delineates a vector polygon for each distilled outlet point generated from [part 3](../basin-delineate-03). Then another command line script will call GDAL for assembling all polygons into a single data source. You need to manually inspect this file to determine if and what editing is required.
+In this part (3) of the of the Basin delineation tutorial series you will run a GRASS command line script generated in [part 3](../basin-delineate-03). The script delineates a vector polygon for each distilled outlet point generated from [part 3](../basin-delineate-03). Then another command line script will call GDAL for assembling all polygons into a single data source. You need to manually inspect this file to determine if and what editing is required.
 
 if you use the default 'MOUTH' process alternative, the script will first manipulate the input Digital Elevation Model (DEM) to better represented the flow path in river mouths and then use the manipulated DEM for identifying the extent of all larger river basins.
 
@@ -141,3 +141,9 @@ ogr2ogr  -append -skipfailures -nlt MULTIPOLYGON /Volumes/GRASS2020/GRASSproject
 the script will only take a few minutes, and then you should have a new ESRI shape file with all the delineated basins.
 
 ### Inspect
+
+There are some geographical situations that can not be automatically resolved.
+
+1. in low laying coastal regions, two kinds of problems can appear
+   - The mouth of otherwise well defined river might become widened and thus include areas that does not drain into the river,
+   - two separate rivers might be merged into a single basin or even a single mouth, even when they are separate.

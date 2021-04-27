@@ -8,7 +8,7 @@ tags:
   - basin
   - delineation
 image: avg-trmm-3b43v7-precip_3B43_trmm_2001-2016_A
-modified: '2020-10-20 T06:17:25.000Z'
+date: '2020-10-20 T06:17:25.000Z'
 modified: '2020-10-20 T06:17:25.000Z'
 comments: true
 share: true

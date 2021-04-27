@@ -1,15 +1,15 @@
 ---
 layout: post
-title: "Basin delineation: 3 Python distilling "
+title: "Basin delineation: 2 Python distilling"
 categories: basindelineate
-excerpt: "Python script for analysing and distilling basin candidates, and producing GRASS script for step 4"
+excerpt: "Python script for analysing and distilling basin candidates, and producing a set of GRASS scripts"
 tags:
   - Python
   - GRASS script
   - basin
   - delineation
 image: avg-trmm-3b43v7-precip_3B43_trmm_2001-2016_A
-modified: '2020-10-27 T06:17:25.000Z'
+date: '2020-10-27 T06:17:25.000Z'
 modified: '2020-10-27 T06:17:25.000Z'
 comments: true
 share: true
@@ -19,27 +19,33 @@ share: true
 
 # Introduction
 
-Part 3 of the tutorial series on Basin delineation covers a custom written Python package, _basin_extract_. The outcome of the package is a vector map with distilled outlet point, and two shell scripts. One for GRASS to actually delineate all the preliminary basins, and one for GDAL to assemble all basins into one data source (polygon vector file). The scripts are then used in [part 4](../basin-delineate-04).
+Stage 2 of the tutorial series on Basin delineation is the central module. At its core it only requires a Digital Elevation Model (DEM) and produces a vector datasets with polygons representing basins. The processing, however, benefits greatly from preprocessing of the DEM as described in the three preceding posts on patching up the DEM. The first stage DEM adjustments removes some coastal situations that causes errors in the basin delineation in this stage.
+
+Further, the basins produced in this stage (stage 2) are only preliminary. They need to be cleaned up in order to correctly represent entire basins and only entire basins. And you need to do a manual inspections for some particular geographical situations geographical that can not be resolved automatically.
+
+This stage requires the custom written Python package, _basin_extract_. From this stage the package generates three shell scripts that each represent a step and muct be run in sequence.
+
+Bot the running of the scripts and the manual inspection and correction are covered in [stage 3](../basin-delineate-03).
 
 ## Prerequisites
 
-You must have setup GRASS 7 and imported a DEM as described in [Installation & Setup](../../basindelineatesetup) of this blog. And then you must have completed the GRASS watershed processing as outlined in [part 2](../basin-delineate-02).
+You must have setup GRASS 7 and imported a DEM as described in [Installation & Setup](../../basindelineatesetup) of this blog. And then you must have completed the GRASS watershed processing as outlined in [part 1](../basin-delineate-01c).
 
 ### Python processing
 
-If you followed parts 1 (Installation & Setup) and 2 of this series, you should have candidate basin outlets available as vector point files in shape format. You can use <span class='app'>QGIS</span> (or another GIS software) to inspect the data source.
+If you followed the Installation & Setup and part 1 of this series, you should have candidate basin outlets available as vector point files in shape format. You can use <span class='app'>QGIS</span> (or another GIS software) to inspect the data source.
 
-The aim of this part of the basin delineation is threefold:
+The aim of this stage of the basin delineation is threefold:
 
 1. to identify outlet points to include for generating preliminary basins,
 2. to retain only a single outlet point per separate mouth - including one point per mouth for rivers (basins) that have multiple mouths (like e.g. a river delta),
 3. to generate the GRASS command line code for basin delineation.
 
-For these tasks I have created a Python script called [basin_extractor](#) available through GitHub. This script will also be used in [part 5](../basin-delineate-05) to join basins that belong to the same river and remove all basins that do no fall completely within the map region (as their complete basins are not represented in the map).
+For these tasks I have created a Python script called [basin_extractor](#) available through GitHub.
 
 #### Default distillation method
 
-Having experimented with different alternatives for creating a set of preliminary basins, the most resilient method is to create a virtual DEM directing flow out of the basin mouths towards a single outlet point (raster cell). Upstream basin delineation is rather problem free, given that the DEM is correct. As pointed out in [part 2](../basin-delineate-02) it is the flow in wide channels and at outlets that cause problems. In particular if the basins are to be used for estimating water balances of entire basins (i.e. at the basin outflows).
+Having experimented with different alternatives for creating a set of preliminary basins, the most resilient method is to create a virtual DEM directing flow out of the basin mouths towards a single outlet point (raster cell). Upstream basin delineation is rather problem free, given that the DEM is correct. As pointed out in [part 1](../basin-delineate-01a) it is the flow in wide channels and at outlets that cause problems. In particular if the basins are to be used for estimating water balances of entire basins (i.e. at the basin outflows).
 
 The default method thus entails the following:
 
@@ -55,7 +61,7 @@ There are, however, other alternatives relying on using either the SFD or the MF
 
 #### Alternative basin distillations
 
-There are 5 basic alternatives for how to start the distilling of your candidate basin outlet points:
+There are 5 basic alternatives for how to distil candidate basin outlet points:
 
 1. Use the combined SFD-MFD ('MOUTH') default system with a virtual coastline wall,
 2. Use all SFD identified outlets for generating preliminary basins,
@@ -63,10 +69,11 @@ There are 5 basic alternatives for how to start the distilling of your candidate
 4. Use all MFD identified outlets for generating preliminary basins,
 5. Cluster adjacent MFD outlets based on the MFD candidate outlets and distill to a single outlet per cluster.
 
+You might have to combine two or more of the above methods in order to get a proper delineation of all basins in your study region. If that is required can only be decided after a visual inspection. My suggestion os that you start with 1. the combined SFD-MFD method.
 
 #### Parameterisation
 
- The Python script _basin_extractor_ is parameterised from an XML file that follows the general structure of [Karttur´s GeoImagine Framework](https://karttur.github.io/geoimagine/concept/concept-concepts/#xml-coded-parameterization):
+The Python script _basin_extractor_ is parameterised from an XML file that follows the general structure of [Karttur´s GeoImagine Framework](https://karttur.github.io/geoimagine/concept/concept-concepts/#xml-coded-parameterization):
 
 ```
 <basindelineate>
@@ -134,27 +141,24 @@ The core parameters include:
 - verbose [0, 1 or 2]
 - proj4CRS ['proj4CRS definition for output data if input layers lack proper projection information']
 
-##### MOUTH processing
+##### Combined SFD-MFD processing (recommended)
+
+To do a combined SFD-MFD processing, use the following settings:
 
 - outlet='MOUTH'
 - distill is ignored
 - adjacentdist is ignored
 - watershed _must be set_
 
-The following _srccomp_ tags must be set:
-
-- basin-mouth-outlet-pt
-- shorewall-pt
-
-The _MOUTH_ processing is the most complex, but also generates the most consistent result. The processing includes the following steps:
+The combined processing is the most complex, but also generates the most consistent result. The processing includes the following steps:
 
 - identify one candidate outlet point per river mouth (either central or with maximum upstream as determined by the _clusteroutlet_ parameter)
 - move candidate outlet point to the nearest cell in the shorewall
 - Create GRASS shell script for repeating the r.watershed analysis with the new outlet point and a hydrologically corrected DEM draining towards this point.
 
-The ensuing processing (in [part 4](../basin-delineate-04)) thus includes creating a new, hydrologically adjusted virtual DEM and then redoing the [r.watershed]() analysis.
+The ensuing processing (in step 2 of this stage) thus includes creating a new, hydrologically adjusted virtual DEM and then redoing the [r.watershed]() analysis.
 
-If you want to run the _MOUTH_ alternative for other data source (ie. for and SFD analysis), you do that by renaming the SFD shape file to the MOUTH equivalent.
+If you want to run the combined alternative for other data source (ie. for and SFD analysis), you do that by defining the source for the standard combined input (""). ???
 
 ##### Non-clustered SFD processing
 

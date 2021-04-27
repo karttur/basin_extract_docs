@@ -1,8 +1,8 @@
 ---
 layout: post
-title: git clone basin_delineate
+title: git clone basin_extract
 categories: basin_delineate_setup
-excerpt: "git clone basin_delineate from GitHub for use in Eclipse"
+excerpt: "git clone basin_extract from GitHub for use in Eclipse"
 tags:
   - Eclipse
   - Basin extract
@@ -21,15 +21,15 @@ figure301: github-framework_karttur_0301_Git-repo-alternatives
 
 The python package _basin_extract_ is freely available as a [repository on GitHub](https://github.com/karttur/basin_extract/).
 
-If you just want to download _basin_extract_ from GitHub, just go ahead and you are done with this post. The rest of this post deals cloning either a stable version or a development version. The letter is intended for those who want to participate in the code development.
+If you just want to download _basin_extract_ from GitHub, just go ahead and you are done with this post. The rest of this post deals with cloning either a stable version or a development version. The latter is intended for those who want to participate in the code development.
 
 ## Prerequisits
 
-If you want to use _basin_extract_ with the IDE <span class='app'>Eclipse</span> you must have setup <span class='app'>Eclipse</span> as outlined in the [previous](../basin-delineate-eclipse-setup) post. It you want to participate in the development you should also have setup the [git version control system](https://karttur.github.io/git-vcs/).
+If you want to use _basin_extract_ with the IDE <span class='app'>Eclipse</span> you must have setup <span class='app'>Eclipse</span> as outlined in the [previous](../basin-delineate-eclipse-setup) post. If you want to participate in the development you should also have setup the [git version control system](https://karttur.github.io/git-vcs/).
 
 ## Cloning alternatives
 
-First you need to decide if you want to participate in the development, or even develop your own code. If you want to do either of those you should start by [forking the original repo to your own GitHub account](https://karttur.github.io/git-vcs/git/git-forks/). If you d not need your won development version you can skip the forking and just clone the _basin_extract_ from Karttur's repo.
+First you need to decide if you want to participate in the development, or even develop your own code. If you want to do either of those you should start by [forking the original repo to your own GitHub account](https://karttur.github.io/git-vcs/git/git-forks/). If you do not need your own development version you can skip the forking and just clone the _basin_extract_ from Karttur's repo.
 
 ### Fork project to your own repo
 
@@ -42,7 +42,7 @@ Login to your account on [GitHub](https://github.com/), or create a free account
 </figure>
 
 ![swithc_branch](../../images/github-switch-branch.png){: .pull-right}
-The forked repo has two branches. Change to the branch _dev_ by clicking the branch button, as illustrated to the right. The page for the _dev_ branch (below) tells you that _This branch is 1 commit ahead of main._
+The forked repo has two branches. Change to the branch _dev_ by clicking the branch button, as illustrated to the right.
 
 With your own fork of the project _basin_extract_ you are ready to get a local clone and starting coding. You can then push your improved/customized code to your won fork, and then push
 
@@ -56,12 +56,12 @@ Regardless if you want to clone the stable (_main_) or development (_dev_) versi
 2. Clone from inside <span class='app'>Eclipse</span>
 3. Clone using git command line and then import separately into <span class='app'>Eclipse</span>
 
-If you do not intend to use <span class='app'>Eclipse</span> you can use the third laternative, but you can also just download the package directly from [GitHub](https://github.com/karttur/basin_extract/).
+If you do not intend to use <span class='app'>Eclipse</span> use the third alternative.
 
 #### Eclipse startup clone
 
 ![new-workspace-folder](../../images/eclispe_create_new_folder_in_workspace.png){: .pull-right}
-This is probably the easiest way to get the whole project setup in <span class='app'>Eclipse</span>. Start <span class='app'>Eclipse</span> and when the IDE launcher page open, create a new folder in your workspace directory. When the welcome pages opens, select the alternative _Checkout projects from Git_.
+This is probably the easiest way to get the whole project setup in <span class='app'>Eclipse</span>. Start <span class='app'>Eclipse</span> and when the IDE launcher page open, create a new folder in your workspace directory. When the welcome pages opens, select the alternative _Checkout projects from Git_ (illustrated below).
 
 <figure>
 <img src="../../images/eclipse_welcome_select_git.png">
@@ -93,7 +93,7 @@ In the Branch selection window you should have two alternatives, _dev_ and _main
 </figcaption>
 </figure>
 
-Set the path to the directory you just created as the target <span class='textbox'>Directory</span>, and the <span class='textbox'>Initial branch</span>.
+Set the path to the directory you just created as the target <span class='textbox'>Directory</span>. _DO NOT_ accept the default target path suggested by <span class='app'>Eclipse</span>, under your user and then <span class='file'>git</span>. This will lead to conflicts when updating git itself. You can also change the <span class='textbox'>Initial branch</span> to _dev_ (or another branch). But keep the standard _origin_ for the <span class='textbox'>Remote name</span>.
 
 <figure>
 <img src="../../images/eclipse_git_clone_local-dir.png">
@@ -101,7 +101,7 @@ Set the path to the directory you just created as the target <span class='textbo
 </figcaption>
 </figure>
 
-In the next window (<span class='window'>Select a wizard to use for importing projects</span>) click the radio button for Importing Existing Eclipse Projects. Then <span class='button'>Next</span>.
+In the next window (_Select a wizard to use for importing projects_) click the radio button for <span class='textbox'>Importing Existing Eclipse Projects</span>. Then <span class='button'>Next</span>.
 
 <figure>
 <img src="../../images/eclipse_select_import_wizard.png">
@@ -133,7 +133,7 @@ Click the <span class='button'>Manual config</span> and you will get to to the P
 </figcaption>
 </figure>
 
-The Python interpreter you need is described in the parallel post on [Eclipse for Basin extraction](../basin-delineate-seclipse-setup/).
+The Python interpreter you need is described in the parallel post on [Eclipse for Basin extraction](../basin-delineate-eclipse-setup/).
 
 #### Clone from inside Eclipse
 
