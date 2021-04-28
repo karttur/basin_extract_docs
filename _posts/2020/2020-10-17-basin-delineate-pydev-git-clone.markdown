@@ -44,7 +44,7 @@ Login to your account on [GitHub](https://github.com/), or create a free account
 ![swithc_branch](../../images/github-switch-branch.png){: .pull-right}
 The forked repo has two branches. Change to the branch _dev_ by clicking the branch button, as illustrated to the right.
 
-With your own fork of the project _basin_extract_ you are ready to get a local clone and starting coding. You can then push your improved/customized code to your won fork, and then push
+With your own fork of the project _basin_extract_ you are ready to get a local clone and starting coding. You can then push your improved/customized code to your own fork. And when you have changes to suggest you can request pushing your changes also to Karttur's (upstream) version.
 
 <br />
 

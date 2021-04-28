@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Basin delineation: 1b patch up DEM pits"
+title: "Basin delineation: 0b patch up pits"
 categories: basindelineate
 excerpt: "Patch up pits in DEM using GRASS"
 tags:
@@ -19,31 +19,31 @@ figure1: GRASS7_Amazonia-Startup_welcome01
 ---
 <script src="https://karttur.github.io/common/assets/js/karttur/togglediv.js"></script>
 
+The hydrological corrections discussed in this article are depreciated and instead included in the [DEM processing belonging to Kartturs' GeoImagine Framework](https://karttur.github.io/geoimagine02-docs/blog/dem/). I recommend that you do any hydrological correction using the Framework and then import the corrected DEM and jumpstart at [stage 1](../basin-delineate-01) of the _basin_extract_ process.
+
 ## Introduction
 
-The basin delineation system outlined in this blog only requires a Digital Elevation Model (DEM) as input. The quality of the DEM is, however, critical. [Part 1a](../basin-delineate-01a) deals with how to change land locked voids of "no data" (__not__ 0 elevation) in a DEM to have a valid elevation of 0. This part instead goes through the rather more complicated process of filling up pits and flatten peaks to correct the DEM hydrologically. If you want to use the python package [basin_extract](https://github.com/karttur/basin_extract) you must also have prepared an XML file as outlined in the [introductory post](../basin-delineate-00). If you did use the Python package [basin_extract](https://github.com/karttur/basin_extract) for replacing land locked "no data" in [part 1a](..7basin-delineate-01a) the GRASS script for filling up pits and flattening peaks has already been created.
+The basin delineation system outlined in this blog only requires a Digital Elevation Model (DEM) as input. The quality of the DEM is, however, critical. [part 1a](../basin-delineate-00a) deals with how to change land locked voids of "no data" (__not__ 0 elevation) in a DEM to have a valid elevation of 0. This part instead goes through the rather more complicated process of filling up pits and flattening peaks to correct the DEM hydrologically. If you want to use the python package [basin_extract](https://github.com/karttur/basin_extract) you must also have prepared a json file as outlined in the [introductory post](../basin-delineate-intro). If you did use the Python package [basin_extract](https://github.com/karttur/basin_extract) for replacing land locked "no data" in [part 0a](../basin-delineate-00a) the GRASS script for filling up pits and flattening peaks has already been created.
 
 ## Prerequisites
 
-These instructions assume that you have a DEM called _inland_comp_DEM_ in your local GRASS mapset; the DEM generated in [part 1a](../basin-delineate-01a). If you have another DEM, you just need to change the local GRASS reference to that DEM in the XML parameter file.
+These instructions assume that you have a DEM called _inland_comp_DEM_ in your local GRASS mapset; the DEM generated in [part 0a](../basin-delineate-00a). If you have another DEM, you just need to change the local GRASS reference to that DEM in the json parameter file.
 
 ## GRASS preparations
 
-There are several GRASS commands that can be used for mending and adjusting DEMs. The easiest is to use ordinary gap filling ([r.fill.stats](https://grass.osgeo.org/grass78/manuals/r.fill.stats.html) or [r.fillnulls](https://grass.osgeo.org/grass78/manuals/r.fillnulls.html)) but these methods do not consider the flow routing. Instead GRASS offers the [r.fill.dir](https://grass.osgeo.org/grass78/manuals/r.fill.dir.html) algorithm. [r.fill.dir](https://grass.osgeo.org/grass78/manuals/r.fill.dir.html) identifies pits along flow paths and then fills them. You can also use [r.fill.dir](https://grass.osgeo.org/grass78/manuals/r.fill.dir.html) for mending small no data holes, by first filling all the holes with a low elevation (typically by setting the elevation equal to zero (0) and then run [r.fill.dir](https://grass.osgeo.org/grass78/manuals/r.fill.dir.html)). If you followed [part 1a](../basin-delineate-01a) of this series this is actually what you are now doing.
+There are several GRASS commands that can be used for mending and adjusting DEMs. The easiest is to use ordinary gap filling ([r.fill.stats](https://grass.osgeo.org/grass78/manuals/r.fill.stats.html) or [r.fillnulls](https://grass.osgeo.org/grass78/manuals/r.fillnulls.html)) but these methods do not consider the flow routing. Instead GRASS offers the [r.fill.dir](https://grass.osgeo.org/grass78/manuals/r.fill.dir.html) algorithm. [r.fill.dir](https://grass.osgeo.org/grass78/manuals/r.fill.dir.html) identifies pits along flow paths and then fills them. You can also use [r.fill.dir](https://grass.osgeo.org/grass78/manuals/r.fill.dir.html) for mending small no data holes, by first filling all the holes with a low elevation (typically by setting the elevation equal to zero (0) and then run [r.fill.dir](https://grass.osgeo.org/grass78/manuals/r.fill.dir.html)). If you followed [part 0a](../basin-delineate-00a) of this series this is actually what you are now doing.
 
-The command [r.flowfill](https://grass.osgeo.org/grass78/manuals/addons/r.flowfill.html) is an alternative, available as an [addon](https://grass.osgeo.org/grass78/manuals/addons/). To install GRASS addons you must have prepared the GRASS c-compiler as described in the post [Install GDAL, QGIS and GRASS](https://karttur.github.io/setup-ide/setup-ide/install-gis/#grass).
+The commands [r.flowfill](https://grass.osgeo.org/grass78/manuals/addons/r.flowfill.html) and [r.hydrodem](https://grass.osgeo.org/grass78/manuals/addons/r.hydrodem.html) are alternatives for pit filling. Both are available as [addons](https://grass.osgeo.org/grass78/manuals/addons/). If you want to try [r.flowfill](https://grass.osgeo.org/grass78/manuals/addons/r.flowfill.html) (or [r.hydrodem](https://grass.osgeo.org/grass78/manuals/addons/r.hydrodem.html)), the command for installing is:
 
-If you want to try [r.flowfill](https://grass.osgeo.org/grass78/manuals/addons/r.flowfill.html) , the command for installing it is:
+<span class='terminal'>> g.extension  extension=r.flowfill</span>
 
-<span class='terminal'>> g.extension  extension=r.fill.gaps</span>
-
-The rest of this manual however, uses [r.fill.dir](https://grass.osgeo.org/grass78/manuals/r.fill.dir.html).
+The updated process available in [Karttur's GeoImagine Framework](https://karttur.github.io/geoimagine02-docs/blog/dem/) uses a combination of [r.fill.dir](https://grass.osgeo.org/grass78/manuals/r.fill.dir.html) and [r.hydrodem](https://grass.osgeo.org/grass78/manuals/addons/r.hydrodem.html) for filling up pits and flattening peaks. The rest of this manual however, uses [r.fill.dir](https://grass.osgeo.org/grass78/manuals/r.fill.dir.html).
 
 ## DEM pits
 
 Artificial (virtual) pits are a common problem in DEMs. Most flow routing algorithms, including GRASS [r.watershed](https://grass.osgeo.org/grass78/manuals/r.watershed.html) can, however, handle pits. To delineate river basins from a DEM, filling up of pits is thus strictly not required. But hydrological modelling of both surface and ground water flow and storage will improve if the DEM is correct.
 
-If you want to fill up pits in your DEM in a hydrologically sound manner you should run [r.fill.dir](https://grass.osgeo.org/grass78/manuals/r.fill.dir.html). For large grids that will, however, take a very (very) long time. Thus you need to tile the DEM, with some overlap, before running [r.fill.dir](https://grass.osgeo.org/grass78/manuals/r.fill.dir.html) separately on each tile. To write such a command structure would also take a day. But with the help of the Python package [basin_extract](https://github.com/karttur/basin_extract) the GRASS commands will be setup in a second. Below both the principles for the pit filling, and how to use [basin_extract](https://github.com/karttur/basin_extract), are covered.
+If you want to fill up pits in your DEM in a hydrologically sound manner you should run [r.fill.dir](https://grass.osgeo.org/grass78/manuals/r.fill.dir.html) (or [r.hydrodem](https://grass.osgeo.org/grass78/manuals/addons/r.hydrodem.html)). For large grids that will, however, take a very (very) long time. Thus you need to tile the DEM, with some overlap, before running any pit filling separately on each tile. To write such a command structure would also take a day. But with the help of the Python package [basin_extract](https://github.com/karttur/basin_extract) the GRASS commands will be setup in a second. Below, both the principles for the pit filling, and how to use [basin_extract](https://github.com/karttur/basin_extract), are covered.
 
 ## GRASS processing
 
@@ -55,6 +55,7 @@ Apart from filling up pits, [basin_extract](https://github.com/karttur/basin_ext
 3. flattening to the 1st quartile of the DEM neighbourhood [_nbdem1q_]
 
 Both the filling of pits and the flattering of peaks can be restricted by applying an SQL (parameters = _fillSQL_ and _inverteFillSQL_). Filling up of single cell pits (parameter _fillDirCells_ = _1_) does not require any SQL. With the parameter _fillDirCells_ set to multiple cells, you can apply an SQL, or sequence of SQLs to create defined channels. But the general recommendation is to only fill up pits that are a single cell in size.
+
 For peaks, it is suggested that you apply an SQL that restricts the flattening also of single cell peaks to those that are located adjacent to a stream channel - identified from an [r.watershed](https://grass.osgeo.org/grass78/manuals/r.watershed.html) upstream analysis.
 
 ### _basin_extract_ control over pit filling
@@ -109,7 +110,7 @@ The principal steps for filling up also pits larger than a single cell in a DEM 
 - v.to.rast rasterize the DEM values
 - r.mapcalc superimpose the filled DEM values over the original DEM
 
-Superimposing the vector points on top of the original DEM can be done using different approaches. Apart from the GRASS commands used above (v.patch, v.to.rast and r.mapcalc) you can also make use of GDAL or ogr2ogr, detailed in  [part 1c](../basin-delineate-01c). You can also add additional columns and data to the vector database, and utilise that data for defining an SQL for more controlled superimposition.
+Superimposing the vector points on top of the original DEM can be done using different approaches. Apart from the GRASS commands used above (v.patch, v.to.rast and r.mapcalc) you can also make use of GDAL or ogr2ogr, detailed in  [part 0c](../basin-delineate-00c). You can also add additional columns and data to the vector database, and utilise that data for defining an SQL for more controlled superimposition.
 
 ### Create tiled process loop
 
@@ -186,8 +187,8 @@ v.what.rast map=inland_fill_pt_0_0 column=filldem raster=hydro_cellfill_DEM_0_0
 v.out.ogr input=inland_fill_pt_0_0 type=point format=ESRI_Shapefile output=/Volumes/GRASS2020/GRASSproject/SRTM/region/basin/amazonia_test_20201201/0/stage0/inland-fill-pt-0-0.shp --overwrite
 ```
 
-The flattening of peaks operate in a similar manner, but from an inverted DEM. 
+The flattening of peaks operate in a similar manner, but from an inverted DEM.
 
 #### Superimpose filled DEM over original DEM
 
-All areas identified as pits or peaks are captured in the sequence of tiles. You now have several alternatives for superimposing these values over the original DEM, outlined in [part 1c](../basin-delineate-01c).
+All areas identified as pits or peaks are captured in the sequence of tiles. You now have several alternatives for superimposing these values over the original DEM, outlined in [part 0c](../basin-delineate-00c).

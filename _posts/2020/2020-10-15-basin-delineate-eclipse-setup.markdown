@@ -55,7 +55,7 @@ Before setting up the virtual environment, update Conda and Anaconda at the term
 
 #### Create a Python 3.6 virtual environment through yaml
 
-YAML (a recursive acronym for "YAML Ain't Markup Language") is usually a kind of configuration file. <span class='terminalapp'>conda</span> virtual environments can be created (or _activated_) using a yaml file that defines all the packages to install. The YAML file for the _basin_delineate_ package is available in the [GitHub]() repo under [docs]() as [basin_extract_py36.yml](). You can download the YAML file and then edit the last line that defines the location of your conda virtual environments. Put the YNAL file in your home diretory and open a <span class='app'>Terminal</span> also pointing to your home directory and activate a new environment with the command:
+YAML (a recursive acronym for "YAML Ain't Markup Language") is usually a kind of configuration file. <span class='terminalapp'>conda</span> virtual environments can be created (or _activated_) using a yaml file that defines all the packages to install. The YAML file for the _basin_extract_ package is available in the GitHub repo under [docs](https://github.com/karttur/basin_extract_docs/tree/gh-pages/docs) as [basin_extract_py36.yml](https://github.com/karttur/basin_extract_docs/tree/gh-pages/docs/basin_extract_py36.yml). You can download the YAML file and then edit the last line that defines the location of your virtual environments. Put the YAML file in your home directory and open a <span class='app'>Terminal</span> also pointing to your home directory and activate a new environment with the command:
 
 <span class='terminal'>$ conda activate -f basin_extract_py36.yml</span>
 

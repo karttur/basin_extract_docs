@@ -29,7 +29,8 @@ Bot the running of the scripts and the manual inspection and correction are cove
 
 ## Prerequisites
 
-You must have setup GRASS 7 and imported a DEM as described in [Installation & Setup](../../basindelineatesetup) of this blog. And then you must have completed the GRASS watershed processing as outlined in [part 1](../basin-delineate-01c).
+You must have setup GRASS 7 and imported a DEM as described in [Installation & Setup](../../basindelineatesetup) of this blog. If your DEM is hydrologically corrected and you also completed stage 1, all the required input data is available. If you did not complete stage 1 you need to add a [r.watersehd] analysis using Multi Flow Direction (MFD) routing.
+
 
 ### Python processing
 

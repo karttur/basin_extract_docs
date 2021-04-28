@@ -21,15 +21,15 @@ share: true
 
 ## Introduction
 
-The basin delineation system outlined in this blog only requires a Digital Elevation Model (DEM) as input. The quality of the DEM is, however, critical. This series of instructions deals with correcting and applying DEMs for hydrological characterisations using mainly GRASS GIS. You can either use the processing steps outlined in the manuals and translate them for your DEM, or you can get the python package [basin_extract](https://github.com/karttur/basin_extract) from [GitHub.com](https://github.com) and automatically generate the processing steps as a set of shell script files.
+The basin delineation system outlined in this blog only requires a Digital Terrain Model (DTM) as input. The quality of the DTM is, however, critical. This series of instructions deals with correcting and applying DTMs for hydrological characterisations using mainly GRASS GIS. You can either use the processing steps outlined in the manuals and translate them for your DTM, or you can get the python package [basin_extract](https://github.com/karttur/basin_extract) from [GitHub.com](https://github.com) and automatically generate the processing steps as a series of shell script files.
 
 ## Prerequisites
 
-You must have setup GRASS 7 and imported a DEM as described under [Installation & Setup](../../basindelineatesetup). The DEM must have null ("no data") for the water body into which the basins to delineate drain. The manual, as well as the python package [basin_extract](https://github.com/karttur/basin_extract), assumes that the input DEM is in the GRASS GIS mapset _PERMANENT_ and have the name _DEM_. The internal GRASS reference to the DEM then becomes _DEM@PERMANENT_. You can, however, change that in the xml parameter file for [basin_extract](https://github.com/karttur/basin_extract) - all explained in detail further down.
+You must have setup GRASS 7 and imported a DEM as described under [Installation & Setup](../../basindelineatesetup). The manual, as well as the python package [basin_extract](https://github.com/karttur/basin_extract), assumes that the input DEM is in the GRASS GIS mapset _PERMANENT_ and have the name _DEM_. The internal GRASS reference to the DTM (or more general: Digital Elevation Model - DEM) then becomes _DEM@PERMANENT_.
 
 ## DEM errors affecting basin delineation
 
-Basin delineation is grounded in the fact that water tends to flow downhill (from a higher to a lower potential, but strictly that does not necessarily mean downhill). This routing of water across the hillside and within water courses is the key for connecting any geographic point in the landscape to an outlet point. Extracting river basins from a DEM, however, traverses the landscape in the opposite direction, from the outlet points and upwards.
+Basin delineation is grounded in the fact that water tends to flow downhill (from a higher to a lower potential, but strictly that does not necessarily mean downhill). This routing of water across the hillside and within water courses is the key for connecting any geographic point in the landscape to an outlet point.
 
 DEM issues that can cause problems for flow routing include:
 
@@ -39,91 +39,29 @@ DEM issues that can cause problems for flow routing include:
 - flat regions,
 - wide river mouths.
 
-Regions lacking data are generally difficult to mend. There are, however, special cases where it is necessary to patch up the holes. In [part 1a](../basin-delineate-01a) you will mend small "no data" regions (typically up to a few dozen cells) by first assigning a low elevation (typically 0) and then, optionally, apply a pit filling (in [part 1b](../basin-delineate-01b)). It is crucial to remove land locked "no data" cells as these will otherwise gorge all the (virtual) water flow entering. Levelling the filled "no data" is not required but if you intend to use the DEM for hydrological modelling it is recommended.
+Regions lacking data are generally difficult to mend. There are, however, special cases where it is necessary to patch up the holes. In [part 1a](../basin-delineate-00a) you will mend small "no data" regions (typically up to a few dozen cells) by first assigning a low elevation (typically 0) and then, optionally, apply a pit filling (in [part 0b](../basin-delineate-00b)). It is crucial to remove land locked "no data" cells as these will otherwise gorge all the (virtual) water flow entering. Levelling the filled "no data" is not required but if you intend to use the DEM for hydrological modelling it is recommended.
 
-Artificial (virtual) pits is the most common problem with applying DEM for hydrological modeling, and most flow routing algorithms, including GRASS [r.watershed](https://grass.osgeo.org/grass78/manuals/r.watershed.html) can handle pits on the flow (or fly). For hydrological modeling it is often, but not always, better to mend artificial depressions. These kind of pits are dealt with in [part 1b](../basin-delineate-01b) and superimposed over the DEM in [part 1c](../basin-delineate-01c).
+Artificial (virtual) pits is the most common problem with applying DEM for hydrological modeling, and most flow routing algorithms, including GRASS [r.watershed](https://grass.osgeo.org/grass78/manuals/r.watershed.html) can handle pits on the flow (or fly). For hydrological modeling it is often, but not always, better to mend artificial depressions. These kind of pits are dealt with in [part 0b](../basin-delineate-00b) and superimposed over the DEM in [part 0c](../basin-delineate-00c).
 
-Artificial barriers are more difficult to handle. One way to locate problematic peaks is to invert the DEM and look for pits (inverted peaks) adjacent to water channels. The processing steps for achieving this is included in [part 1b](../basin-delineate-01b) and [part 1c](../basin-delineate-01c) of the DEM patch up, and also coded into the python package [basin_extract](https://github.com/karttur/basin_extract).
+Artificial barriers are more difficult to handle. One way to locate problematic peaks is to invert the DEM and look for pits (inverted peaks) adjacent to water channels. The processing steps for achieving this is included in [part 0b](../basin-delineate-00b) and [part 0c](../basin-delineate-00c) of the DEM patch up, and also coded into the python package [basin_extract](https://github.com/karttur/basin_extract).
 
-In the parameterization you can decide whether or not to include pit filling and peak flattening, and which pits and peaks to level.
+In the parameterization you can decide whether or not to include pit filling and peak flattening, and which pits and peaks to level. Note that as of April 2021 I recomment that you prepare your DEM, including pit filling and peak flattening, using [Karttur´s GeoImagine Framework DEM processing](https://karttur.github.io/geoimagine02-docs/blog/dem/) (see next section).
 
-Flat regions and wide river mouths cause similar flow routing problems. Different algorithms can be applied (i.e. Single flow Direction, or SFD, versus Multiple Flow Direction, MFD) for handling flat area. But a more ideal solution is to increase the vertical resolution and properly steer the routing using elevation data. This post includes a test of different flow directions algorithms. To steer the virutal water flow to a single outlet in wide outlets the package can also be used for creating a sloping surface for large river mouths.
+Flat regions and wide river mouths cause similar flow routing problems. Different algorithms can be applied (i.e. Single flow Direction, or SFD, versus Multiple Flow Direction, MFD) for handling flat area. But a more ideal solution is to increase the vertical resolution and properly steer the routing using elevation data. This post includes a test of different flow directions algorithms. To steer the virtual water flow to a single outlet in wide outlets the package can also be used for creating a sloping surface for large river mouths.
+
+## Accessing and correcting DEMs
+
+In another [set of articles on DEM data and processing](https://karttur.github.io/geoimagine02-docs/blog/dem/), belonging to [Karttur's GeoImagine Framework](https://karttur.github.io/geoimagine02-docs/), I have listed some [global DEMs and how to access them](https://karttur.github.io/geoimagine02-docs/blog/blog-global-dems/). The Framework now also contains the hydrological corrections described below, and I have depreciated the development of those parts for the _basin_extract_ package.
 
 ## Parameterizing _basin_extract_
 
-Some of the processing for delineating river basins from a DEM can be manually edited, but some parts require an automated approach. The python package [basin_extract](https://github.com/karttur/basin_extract) was created to automate most of the processing. The package is parameterized from an XML-file. The xml file used for the example region (Amazonia in South America) is included and explained here as a reference.
+Some of the processing for delineating river basins from a DEM can be manually edited, but some parts require an automated approach. The python package [basin_extract](https://github.com/karttur/basin_extract) was created to automate most of the processing. The package is parameterized from _json_ parameter files. The _json_ file used for the example region (Amazonia in South America) is included and explained here as a reference.
 
 ```
-<?xml version='1.0' encoding='utf-8'?>
-<basindelineate>
-	<userproj userid = 'karttur' projectid = 'karttur' tractid= 'amazonia' alias ='amazonia_test_20201220' siteid = '*' plotid = '*' system = 'MODIS'></userproj>
 
-	<!-- Define processing -->
-	<process processid ='BasinDelineate'>
-		<filecheck>N</filecheck>
-		<overwrite>Y</overwrite>
-		<delete>N</delete>
-		<parameters
-			stage = '0'
-			grassDEM = 'DEM@PERMANENT'
-			adjacentDist = '-1'
-			outlet = 'mouth'
-			distill = 'mouth'
-			clusterOutlet = 'maximum'
-			basinCellThreshold='2000'
-			watershed='MFD5'
-			terminalClumpCellThreshold = '16'
-			fillDirCells = '1'
-			fillSQL = ''
-			invertedFillDirCells ='1'
-			invertedFillValue = 'nbdemq1'
-			invertedFillSQL = 'nbmax &gt; 250 AND nbmax &lt; 50000 AND nbupq3 &lt; 250'
-			tileCellSize = '1000'
-			tileCellOverlap = '10'
-			proj4CRS = '+proj=sinu +lon_0=0 +x_0=0 +y_0=0 +a=6371007.181 +b=6371007.181 +units=m +no_defs'
-			verbose = '2'
-		>
-		</parameters>
-		<srcpath volume = "GRASS2020"></srcpath>
-		<dstpath volume = "GRASS2020"></dstpath>
-
-		<comp>
-			<!-- You have to include the source DEM used for the basin delineation.
-			The path to any data source is set on the following composition:
-			/Volumes/GRASS2020/MODIS/SRTM/region/basin/amazonia/0/DEM_SRTM_amazonia_0_cgiar-250.tif
-			The setting below, in combination with the srcpath, tractd and system above
-			will point to a DEM at:   
-			/Volumes/<srcpath volume>/<userproj system>/<comp .. product>/region/<comp .. folder>/<userproj alias>/0/
-			<comp .. prefix>_<comp .. product>_<userproj tractid>_0_<comp .. suffix>.tif
-			-->
-			<DEM source = "SRTM" product = "SRTM" folder = "basin" band = "DEM" prefix = "DEM" suffix = "cgiar-250">
-			</DEM>
-
-			<!-- To set a defualt path for the data exported from GRASS during the processing, you need to define
-			that in a tag called <system>, otherwise the settings from the <DEM> tag will be used.
-			-->
-			<system source = "SRTM" product = "drainage" folder = "basin" band = "system" prefix = "system" suffix = "cgiar-250">
-			</system>
-
-			<!--               
-			You can add the predefiend name ("prefix")of any of the spatial datasets defined in the processing
-			as outlind below, and the output path and name will be set accordingly.
-			The GRASS GIS internal naming is hardcoded.
-
-			<all-outlets-pt source = "SRTM" product = "drainage" folder = "basin" band = "all-outlets-pt" prefix = "all-outlets-pt-version-x" suffix = "cgiar-250">
-			</all-outlets-pt>
-
-			<shorewall-pt source = "SRTM" product = "drainage" folder = "basin" band = "shorewall-pt" prefix = "shorewall-pt-version-y" suffix = "cgiar-250">
-			</shorewall-pt>
-			-->
-		</comp>
-
-	</process>
-
-</basindelineate>
 ```
 
-### \<userproj\>
+### \<userproject\>
 
 The \<userproj\> tag contains global attributes, including:
 - _userid_ and _projectid_ are the ids of the user and proejct when the package is used as part Karttur's GeoImagine Framework and can be set to anything when the package is used as a stand alone solution,
@@ -144,7 +82,7 @@ The \<process\> tag defines which process that is defined when the package is us
 
 ### \<parameters\>
 
-The core parameters that determine the process  settings:
+The core parameters that determine the process settings:
 
 - stage = '0' # the process stage [0, 1, 2, 3 or 4]
 - grassDEM = 'DEM@PERMANENT' # internal name of DEM in GRASS to use as input, NOTE that this can vary with stage
@@ -233,12 +171,12 @@ All compositions contain the following components or parts:
 
 - source
 - product
-- folder (or theme)
-- band
+- content
+- layerid
 - prefix
 - suffix
 
-The _source_ is the origin of the dataset (e.g. the satellite platform, the organization or individual behind the data), _product_ is usually a coded product identifier or the producer, _folder_ is a thematic identifier, _band_ is a content identifier with _prefix_ usually identical to _band_ but can be set differently, and _suffix_ is a more loose part that can be freely set but usually represents a version identifier.
+The _source_ is the origin of the dataset (e.g. the satellite platform, the organization or individual behind the data), _product_ is usually a coded product identifier or the producer, _content_ is a thematic identifier, _layerid_ is a content identifier with _prefix_ usually identical to _layerid_ but can be set differently, and _suffix_ is a more loose part that can be freely set but usually represents a version identifier.
 
 Compositions as such do not relate to any spatial extent or temporal validity.
 
@@ -265,10 +203,10 @@ All the data files are organized in a hierarchical folder structure with the fol
 - system
 - source (from composition)
 - division (tiles, region or mosaic)
-- folder (from composition)
+- content (from composition)
 - location
 - timestamp
 
-The two lowest hierarchical levels, _location_ and _timestamp_, are identical to the _location_ and _timestamp_ in the file name. The thematic _folder_ can be anything like "basin", "elevation", "landform" or other thematic identifier and equals the _folder_ in the composition. _division_ can only take three different values "tiles", "region" or "mosaic". All basin delineation is done at the _region_ level.
+The two lowest hierarchical levels, _location_ and _timestamp_, are identical to the _location_ and _timestamp_ in the file name. The thematic _content_ can be anything like "basin", "elevation", "landform" or other thematic identifier and equals the _folder_ in the composition. _division_ can only take three different values "tiles", "region" or "mosaic". All basin delineation is done at the _region_ level.
 
-The _source_ level identifies the source or origin of the data and is equal to the composition _source_, for instance "SRTM" for Shuttle Radar Topography Mossion data. The top _system_ level is also a fixed attribute of each process, and relate to the different systems for representing data that is included in the Framework (e.g. _ancillary_, _modis_ or _sentinel_), plus one system (_system_) for some default data.
+The _source_ level identifies the source or origin of the data and is equal to the composition _source_, for instance "SRTM" for Shuttle Radar Topography Mission data. The top _system_ level is also a fixed attribute of each process, and relate to the different systems for representing data that is included in the Framework (e.g. _ancillary_, _modis_, _sentinel_ or any of the three EASE-grid v2 projections [_ease2n_, _ease2s_ and _ease2t_]), plus one system (_system_) for some default data.

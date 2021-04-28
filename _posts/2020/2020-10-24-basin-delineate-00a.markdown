@@ -1,6 +1,6 @@
 ---
 layout: post
-title: "Basin delineation: 1a patch up DEM voids"
+title: "Basin delineation: 0a patch up voids"
 categories: basindelineate
 excerpt: "Patch up DEM small 'no data' regions at the shoreline using GRASS"
 tags:
@@ -18,13 +18,15 @@ share: true
 ---
 <script src="https://karttur.github.io/common/assets/js/karttur/togglediv.js"></script>
 
+Later [generation of DEMs](https://karttur.github.io/geoimagine02-docs/blog/blog-global-dems/) have no voids, even when the coverage is global. Further, the hydrological corrections discussed in this article are depreciated and instead included in the [DEM processing belonging to Kartturs' GeoImagine Framework](https://karttur.github.io/geoimagine02-docs/blog/dem/).
+
 ## Introduction
 
 Land locked region of voids or "no data" in DEMs gorge up all entering flow vectors. This causes under estimation of downstream flow and errors in for example flooding and water balance models. The objective of the instructions in this post is to remove all land enclosed "no data" regions from the DEM to use for basin delineation. The post is part of the instruction on [Basin delineation from Digital Elevation Models](../../).
 
 ## Prerequisites
 
-You must have setup GRASS 7 and imported a DEM as described under [Installation & Setup](../../basindelineatesetup). If you want to use the python package [basin_extract](https://github.com/karttur/basin_extract) you must also have prepared an XML file as outlined in a [previous post](../basin-delineate-00).
+You must have setup GRASS 7 and imported a DEM as described under [Installation & Setup](../../basindelineatesetup). If you want to use the python package [basin_extract](https://github.com/karttur/basin_extract) you must also have prepared an json parameterization file as outlined in a [previous post](../basin-delineate-intro).
 
 ### DEM coastal "no data" errors
 
@@ -34,7 +36,7 @@ Narrow bays, estuaries, lagoons etc. can cause problems in near shore regions. B
 
 The next sections below explain in detail how to use GRASS for identifying and filling land locked "no data" regions. If you only want to run the process, all the commands are summarized further down. The best alternative, however, is to use the Python package [basin_extract](https://github.com/karttur/basin_extract) to generate the script for you, also explained further down.
 
-Once you have filled the land locked "no data" holes you can use [r.fill.dir](https://grass.osgeo.org/grass78/manuals/r.fill.dir.html) to fill them up with more realistic elevation values, the topic of parts [1b](../basin-delineate-01b) and [1c](../basin-delineate-01c). For running the watershed analysis in [stage 2](../basin-delineate-02), it is, however, enough to assign a low elevation (i.e. 0) to the "no data" holes.
+Once you have filled the land locked "no data" holes you can use [r.fill.dir](https://grass.osgeo.org/grass78/manuals/r.fill.dir.html) or [r.hydrodem](https://grass.osgeo.org/grass78/manuals/addons/r.hydrodem.html) to fill them up with more realistic elevation values, the topic of parts [0b](../basin-delineate-00b) and [0c](../basin-delineate-00c). For running the watershed analysis in [stage 1](../basin-delineate-01) and [stage 2](../basin-delineate-02), it is, however, enough to assign a low elevation (i.e. 0) to the "no data" holes.
 
 ### Make the target directory
 
@@ -51,6 +53,8 @@ Create a map of the terminal drainage using the GRASS command [r.mapcalc](https:
 Then use [r.mapcalc](https://grass.osgeo.org/grass78/manuals/r.mapcalc.html) to create a raster layer of your terminal drainage with all land pixels set to _null_:
 
 <span class='terminal'>>r.mapcalc \"drain_terminal = if(isnull(\'DEM@PERMANENT\'), 1, null())\"</span>
+
+### Reclass small no-data areas to upland
 
 Clump ([r.clump](https://grass.osgeo.org/grass78/manuals/r.clump.html)) all contiguously agglomerated cells together with a unique id to allow identifying large and small bodies representing the terminal drainage (voids or "no data" in the original DEM).
 
@@ -86,18 +90,17 @@ Export the completed DEM for land areas:
 
 <span class='terminal'>> r.out.gdal format=GTiff  input=inland_comp_DEM output=/Volumes/GRASS2020/GRASSproject/SRTM/region/basin/amazoniax/0/inland-comp-DEM_amazonia_0_cgiar-250.tif --overwrite</span>
 
+#### Alternatives: r.area and r.reclass.area
+
+Instead of using the sequence of commands starting with [r.clump](https://grass.osgeo.org/grass78/manuals/r.clump.html) you can use the addon [r.area](https://grass.osgeo.org/grass78/manuals/addons/r.area.html) to clump, calculate areas and remove areas smaller or greater than given threshold in a single command. You can also apply [r.reclass.area](https://grass.osgeo.org/grass78/manuals/r.reclass.area.html) to the clumped raster for removing areas smaller or greater than a given threshold.
+
 ### _basin_extract_ python package
 
-The required sequence of commands to patch up the "no data" holes of the DEM can be generated with the python package [basin_extract](https://github.com/karttur/basin_extract). You have to change the [xml file in the Introduction](../basin-delineate_00) to reflect your region, DEM and local disk names. The relevant core parameters include:
-
-- stage [0, 1, 2 or 3] (this part is for stage = '0')
-- verbose [0, 1 or 2]
-- proj4CRS ['proj4CRS definition for output data if input layers lack proper projection information']
-- grassDEM = the original input DEM
+The required sequence of commands to patch up the "no data" holes of the DEM can be generated with the python package [basin_extract](https://github.com/karttur/basin_extract). You have to change the [json file in the Introduction](../basin-delineate_intro) to reflect your region, DEM and local disk names.
 
 #### Output from _basin_extract_
 
-Running [basin_extract](https://github.com/karttur/basin_extract) with _stage = 0_ generates five shell script files. The processing commands for replacing isolated "no data" holes in the DEM is in the shell script file named _"region"_grass_fix-terminal-drainage-nodata_stage0-step0.sh_.
+Running [basin_extract](https://github.com/karttur/basin_extract) with _stage = 0_ generates anywhere between one and five shell script files, dependent on your setting. The processing commands for replacing isolated "no data" holes in the DEM is in the shell script file named _"region"_grass_fix-terminal-drainage-nodata_stage0-step0.sh_.
 
 ### GRASS shell script
 
@@ -153,4 +156,4 @@ r.out.gdal format=GTiff  input=inland_comp_DEM output=/Volumes/GRASS2020/GRASSpr
 
 ### Next step
 
-The DEM created in this example, _inland_comp_DEM_ is sufficient for use with [r.watershed](https://grass.osgeo.org/grass78/manuals/r.watershed.html) in [part 2](../basin-delineate-02). Parts [1b](../basin-delineate-01b) and [1c](../basin-delineate-01c) deal with filling up pits as a way to hydrologically correct the DEM. But that is strictly not needed for running [r.watershed](https://grass.osgeo.org/grass78/manuals/r.watershed.html).
+The DEM created in this example, _inland_comp_DEM_ is sufficient for use with [r.watershed](https://grass.osgeo.org/grass78/manuals/r.watershed.html) in [part 1](../basin-delineate-01) and [part 2](../basin-delineate-02). Parts [0b](../basin-delineate-00b) and [0c](../basin-delineate-00c) deal with filling up pits as a way to hydrologically correct the DEM. But that is strictly not needed for running [r.watershed](https://grass.osgeo.org/grass78/manuals/r.watershed.html). And as noted in the beginning, the hydrological correction of DEM data is better done as part of [Kartturs' GeoImagine Framework](https://karttur.github.io/geoimagine02-docs/blog/dem/).
